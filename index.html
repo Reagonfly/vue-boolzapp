@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>BoolZapp</title>
+</head>
+<body>
+    <div id="app" class="container_all">
+        <div class="container">
+            <!-- Sinistra -->
+            <div class="container_chat d-flex flex-column">
+                <div class="row-profile">
+
+                    <!-- Immafgine del profilo e icone notifiche -->
+                    <div id="profile-left" class="profile-pic col-profile d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center ">
+                            <img class ="rounded-circle" :src="`img/avatar${user.avatar}.jpg`" alt="user.name">
+                            <div class="p-2 title">{{user.name}}</div>
+                        </div>
+                        <div class="notification">
+                            <i class="fa-solid fa-circle-notch"></i>
+                            <i class="fa-solid fa-message"></i>
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </div>
+                    </div>
+
+                    <!-- Nuovi messaggi -->
+
+                    <div id="new-message" class="d-flex align-items-center">
+                        <div class="new-message p-2 d-flex " >
+                            <div>
+                                <i class="fa-solid fa-bell-slash" ></i>
+                            </div>
+                            <div class="ps-3">
+                                <div>Ricevi notifiche di nuovi messaggi</div>
+                                <div><a href="#"> Attiva notifiche desktop</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cerca il contatto nei messaggi -->
+                <div class="search-cont">
+                    <i class="fas fa-search"></i>
+                    <input type="text" class="search-input" placeholder="Cerca o inizia una nuova chat." autocomplete="off" v-model="chatSearch" @keyup="search()">
+                </div>
+                
+
+                    <!-- Messaggi -->
+
+                  <div id="profile-left" class=" h-100 bg-white">
+
+                      <div class="bordbot"  v-for="(item, index) in contactFind" @click="selectedChat(index)" :class="(activeItem === index ) ? 'bg-gray' : '' " >
+                          <div class="d-flex justify-content-between pe-1">
+                              <div class="d-flex align-items-center p-2">
+                                  <img class ="rounded-circle" :src="imgProfile(index)" alt="">
+                                  <div class="p-2">
+                                      <h5>{{ contactFind[index].name }}</h5>
+                                      <p class="fnt-small">{{ contactFind[index].messages[contactFind[index].messages.length - 1].message }}</p>
+                                      
+                                    </div>
+                                </div>
+                                <div class="pt-3">{{item.messages[item.messages.length - 1].date.split(' ')[1]}}</div>  
+                            </div>
+                        </div>
+                    </div>
+            </div>
+
+            <!-- Immagine di profilo e icone -->
+            <div class="container_message d-flex flex-column justify-content-between">
+                <div class="row-profile">
+                    <div class="profile-pic col-profile d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <img class ="rounded-circle" :src="imgProfile(activeItem)" alt="">
+                            <div class="p-2 d-flex flex-column">
+                                <div class="title">{{contacts[activeItem].name}}</div>
+                                <div>Ultimo accesso alle 10:00</div>
+                            </div>
+                        </div>
+                        <div class="notification">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <i class="fa-solid fa-paperclip"></i>
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </div>
+                    </div>                       
+                </div>
+
+                <!-- Sfondo chat -->
+                <div id="chat" class="row-chat background-image p-4 " >
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div>
+                                <ul class="list-unstyled">
+                                    <li class="list-item d-flex flex-column"  v-for="(item, index) in contacts[activeItem].messages">
+                                        <div :class="(contacts[activeItem].messages[index].status == 'sent') ? 'sent' : 'received'">
+                                                <div class="cursor d-flex align-items-center">
+                                                    {{ chatSendRec(index, activeItem) }}
+                                                    <i class="ms-5 fa-solid fa-chevron-down"></i>
+                                                    <div class="oa">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Input messaggi -->
+                <div class="row-profile">
+                    <div class="profile-pic d-flex justify-content-between align-items-center">
+                        <div class="p-3"> 
+                            <i class="fa-regular fa-face-smile"></i>
+                        </div>
+                        <input type="text"  placeholder="Scrivi un messaggio.." class="form-control" v-model="newTask"  @keyup.enter="enterMessage()">
+                        <div class="p-3">
+                            <i class="fa-solid fa-microphone"><a href="#"></a></i>
+                        </div>
+                    </div>                       
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="./js/script.js"></script>
+</body>
+</html>
